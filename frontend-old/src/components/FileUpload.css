@@ -1,0 +1,229 @@
+* {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.iconify{
+    margin-right: 10px
+}
+
+/* Container for the upload area */
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: white;
+    flex-grow: 1; /* Allow the container to grow and take available space */
+}
+
+.upload-container p{
+    font-size: 18px;
+    padding: 10px;
+}
+
+/* Style for the drag-and-drop area */
+.drag-drop-area {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 30px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+}
+
+/* Confirm upload button */
+.upload-button {
+    padding: 10px 20px;
+    background-color: #C4D600;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.upload-icon {
+    font-size: 20px; 
+    margin-right: 10px;
+  }
+
+.upload-button:hover {
+    background-color: #A4B700;
+}
+
+.icon-container {
+    display: flex;
+    align-items: center; /* Aligns the icon and text vertically */
+}
+  
+.file-icon {
+    font-size: 25px; 
+    color: #333;  
+    margin-bottom: 10px;
+}
+
+/* File input styles */
+.file-input {
+    display: none;
+}
+
+/* Preview container for uploaded files */
+.file-previews {
+    width: 100%;
+    display: flex;
+    flex-direction: column; /* Stack file previews vertically */
+    align-items: stretch; /* Make each file preview take the full width */
+    margin-bottom: 20px;
+    text-align: center;
+    align-items: center;
+}
+
+/* Individual file preview box */
+.file-preview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 90%; /* Ensure file previews take the full width */
+    box-sizing: border-box;
+    margin-bottom: 10px; /* Space between file previews */
+}
+
+/* Remove file button */
+.remove-icon {
+    font-size: 16px; 
+    margin-top: 5px;
+    margin-right: 0px;
+    color: #fff;  
+}
+
+.remove-file {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.remove-file:hover {
+    background-color: #d32f2f;
+}
+
+/* Confirm upload button */
+.confirm-button {
+    padding: 10px 20px;
+    background-color: #C4D600;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.confirm-button:hover {
+    background-color: #A4B700;
+}
+
+/* Uploaded files container */
+.uploaded-files {
+    width: 90%;
+    text-align: left; /* Align the content to the left */
+}
+
+/* Uploaded Files header */
+.uploaded-files h3 {
+    text-align: left; /* Left align the header */
+    margin-bottom: 10px; /* Add space below the header */
+}
+
+/* Uploaded file list */
+.uploaded-files ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Uploaded file list items */
+.uploaded-files li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px; /* Space between uploaded files */
+}
+
+/* Modal overlay */
+.confirm-delete-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Darken background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure the modal is on top */
+  }
+  
+  /* Modal content */
+  .confirm-delete-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+  }
+
+  .confirm-delete-modal h3 {
+    font-size: 20px;
+    font-weight: 450;
+  }
+  
+  /* Modal actions */
+
+  .delete-icon {
+    margin-top: 2px;
+    font-size: 25px; 
+    color: #fff;  
+}
+
+  .confirm-delete-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+/* Modal actions */
+.confirm-delete-modal-actions .confirm-button, .confirm-delete-modal-actions .cancel-button {
+    font-size: 18px;
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+/* Confirm button */
+.confirm-delete-modal-actions .confirm-button:hover {
+    background-color: #C4D600;
+}
+
+/* Cancel button */
+.confirm-delete-modal-actions .cancel-button:hover {
+    background-color: #e57373;
+}

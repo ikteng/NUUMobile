@@ -68,7 +68,7 @@ echo "Running React frontend..."
 cd frontend || { echo "Frontend directory not found!"; exit 1; }
 # Remember to install Node.js before this step!
 npm install  # Install frontend dependencies if not already done
-npm start &
+npm run dev &
 
 # Wait for both processes to finish
 wait

@@ -1,0 +1,72 @@
+.content {
+  padding: 20px 20px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h1 {
+  font-size: 1.8em;
+  padding: 10px;
+}
+
+/* Graph Container */
+.graph {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+/* Graph Container */
+.graphs-container {
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.graph-container {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 20px;
+  margin: 20px;
+}
+
+.graph-container h2 {
+  font-size: 1.6em;
+  margin-bottom: 20px;
+}
+
+.graph-container p {
+  font-size: 1em;
+  margin: -10px 20px 30px;
+}
+
+.donut-graph-container{
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  margin: 20px;
+  padding: 20px
+}
+
+.donut-charts-container {
+  background-color: #fff;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 3fr));
+  gap: 30px;
+  padding: 20px;
+  margin: 20px;
+}
+
+.donut-chart {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 20px;
+  box-sizing: border-box; 
+  display: flex;
+  flex-direction: column; 
+  justify-content: center; 
+  overflow: visible; 
+}
