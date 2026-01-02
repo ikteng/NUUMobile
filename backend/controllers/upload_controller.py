@@ -18,6 +18,7 @@ def upload_files():
     for f in files:
         # Save each file
         filepath = os.path.join(UPLOAD_FOLDER, f.filename)
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
         f.save(filepath)
         saved_files.append(f.filename)
 

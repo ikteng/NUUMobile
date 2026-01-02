@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { FileUploadApi } from '../api/FileUploadApi';'../api/FileUploadApi'
+import { FileUploadApi } from '../api/FileUploadApi';
+import NotificationBox from '../components/NotificationBox';
 import './FileUpload.css';
 
 function FileUpload() {
@@ -144,9 +145,7 @@ function FileUpload() {
       
       {/* Notification Box */}
       {notification && (
-        <div className="notification-box">
-          {notification}
-        </div>
+        <NotificationBox message={notification} />
       )}
 
     </div>
