@@ -1,0 +1,28 @@
+.preview-table-container {
+  width: 100%;
+  overflow-x: auto; /* horizontal scroll if table is too wide */
+  max-height: 400px; /* optional vertical scroll */
+  overflow-y: auto;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px; /* ensures horizontal scroll if table is wider */
+}
+
+.preview-table th,
+.preview-table td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.preview-table th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}

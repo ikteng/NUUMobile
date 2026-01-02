@@ -1,0 +1,41 @@
+.dashboard-container {
+  min-height: calc(100vh - 70px);
+  padding: 2rem;
+  background-color: #f7f8fa;
+}
+
+h1 {
+  color: var(--color-dark-gray);
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-selection {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-field label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-gray);
+}
+
+.dashboard-field select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  min-width: 200px;
+}
+
+.dashboard-content {
+  background: var(--color-white);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}

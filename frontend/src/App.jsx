@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import FileUpload from "./pages/FileUpload";
+import Dashboard from "./pages/Dashboard";
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/upload" element={<FileUpload />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         {/* Add other routes here as needed */}
       </Routes>
     </Router>

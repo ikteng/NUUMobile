@@ -13,3 +13,4 @@ xgboost
 imblearn
 xlrd
 ipykernel
+openpyxl
