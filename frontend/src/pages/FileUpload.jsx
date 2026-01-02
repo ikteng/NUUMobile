@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import { FileUploadApi } from '../api/FileUploadApi';'../api/FileUploadApi'
 import './FileUpload.css';
 
 function FileUpload() {
+  const navigate = useNavigate();
+  const [files, setFiles] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [notification, setNotification] = useState('');
+
   useEffect(() => {
     document.title = 'Upload - Churn Predictor';
 
@@ -19,10 +26,6 @@ function FileUpload() {
       window.removeEventListener('drop', preventDefaults);
     };
   }, []);
-
-  const [files, setFiles] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [notification, setNotification] = useState('');
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -60,22 +63,31 @@ function FileUpload() {
     setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (files.length === 0) return;
 
-    // Here you would call your backend API to upload files
-    // Example: await uploadFiles(files);
+    try {
+      // Upload files via API
+      const result = await FileUploadApi.upload(files);
 
-    // Show notification
-    setNotification(`${files.length} file${files.length > 1 ? 's' : ''} uploaded successfully!`);
+      // Show notification
+      setNotification(
+        `${files.length} file${files.length > 1 ? "s" : ""} uploaded successfully!`
+      );
 
-    // Clear selected files
-    setFiles([]);
+      // Clear selected files
+      setFiles([]);
 
-    // Redirect to dashboard after 2 seconds
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 2000);
+      console.log("Uploaded files:", result.files);
+
+      // Redirect to dashboard after 1 seconds
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      setNotification("Upload failed. Please try again.");
+    }
   };
 
   return (
