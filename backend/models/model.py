@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix
 import xgboost as xgb
@@ -111,7 +110,7 @@ xgb_model.fit(X_train_transformed, y_train, sample_weight=sample_weight)
 # ------------------------------
 # Memory buffer for continual learning
 # ------------------------------
-memory_buffer_size = 200  # smaller buffer
+memory_buffer_size = 500
 buffer_df = train_df.sample(memory_buffer_size, random_state=42)
 buffer_X = buffer_df[core_features].copy()
 buffer_y = buffer_df[target].astype(int)
@@ -145,8 +144,8 @@ def incremental_update_xgb(model, df_new, buffer_X, buffer_y, buffer_size=200):
     # Update buffer
     combined_df = pd.concat([buffer_X.assign(_y=buffer_y), X_new.assign(_y=y_new)], ignore_index=True)
     buffer_sample = combined_df.sample(buffer_size, random_state=42)
-    buffer_X[:] = buffer_sample[core_features]
-    buffer_y[:] = buffer_sample['_y']
+    buffer_X[:] = buffer_sample[core_features].astype(buffer_X.dtypes.to_dict())
+    buffer_y[:] = buffer_sample['_y'].astype(buffer_y.dtype)
 
     return model, buffer_X, buffer_y
 
@@ -193,13 +192,44 @@ for sheet_name, df in dfs.items():
 df_future = preprocess_sheet(pd.read_excel(uw_path, sheet_name='Data Before Feb 13'))
 
 # ------------------------------
-# Predict churn probabilities
+# Continual learning on df_future in batches
 # ------------------------------
-y_pred_proba = predict_churn_xgb(xgb_model, df_future)
+batch_size = 200
+num_rows = len(df_future)
+
+for start in range(0, num_rows, batch_size):
+    end = start + batch_size
+    df_batch = df_future.iloc[start:end]
+    
+    # Predict before update
+    y_batch_actual = df_batch[target].astype(int)
+    y_batch_proba = predict_churn_xgb(xgb_model, df_batch)
+    y_batch_pred = (y_batch_proba >= 0.5).astype(int)
+    
+    batch_accuracy = (y_batch_pred == y_batch_actual).mean()
+    batch_cm = confusion_matrix(y_batch_actual, y_batch_pred)
+    
+    print(f"\n--- Batch {start} to {end} ---")
+    print(f"Prediction accuracy before update: {batch_accuracy:.4f}")
+    print("Confusion Matrix:")
+    print(batch_cm)
+    
+    # Incrementally update model
+    xgb_model, buffer_X, buffer_y = incremental_update_xgb(
+        xgb_model, df_batch, buffer_X, buffer_y, buffer_size=memory_buffer_size
+    )
+    
+    # Predict after update
+    y_batch_proba_post = predict_churn_xgb(xgb_model, df_batch)
+    y_batch_pred_post = (y_batch_proba_post >= 0.5).astype(int)
+    batch_accuracy_post = (y_batch_pred_post == y_batch_actual).mean()
+    
+    print(f"Prediction accuracy after update: {batch_accuracy_post:.4f}")
 
 # ------------------------------
-# Compare predictions with actual Churn
+# Final prediction on full df_future
 # ------------------------------
+y_pred_proba = predict_churn_xgb(xgb_model, df_future)
 y_pred_label = (y_pred_proba >= 0.5).astype(int)
 y_actual = df_future[target].astype(int)
 
@@ -211,8 +241,35 @@ comparison_df['Churn_pred_proba'] = y_pred_proba
 accuracy = (y_pred_label == y_actual).mean()
 cm = confusion_matrix(y_actual, y_pred_label)
 
-print(f"Prediction accuracy on df_future: {accuracy:.4f}")
+print(f"\nFinal prediction accuracy on df_future: {accuracy:.4f}")
 print("Confusion Matrix:")
 print(cm)
 print("Sample predictions:")
 print(comparison_df.head())
+
+# ------------------------------
+# Re-check predictions on original sheets after continual learning
+# ------------------------------
+for sheet_name, df in dfs.items():
+    print(f"\n--- Post-update Predictions for sheet: {sheet_name} ---")
+    
+    X_sheet = df[core_features]
+    y_sheet = df[target].astype(int)
+    
+    X_transformed = preprocessor.transform(X_sheet)
+    y_pred_proba = xgb_model.predict_proba(X_transformed)[:, 1]
+    y_pred_label = (y_pred_proba >= 0.5).astype(int)
+    
+    accuracy = (y_pred_label == y_sheet).mean()
+    cm = confusion_matrix(y_sheet, y_pred_label)
+    
+    comparison_df = df[core_features].copy()
+    comparison_df['Churn_actual'] = y_sheet
+    comparison_df['Churn_pred'] = y_pred_label
+    comparison_df['Churn_pred_proba'] = y_pred_proba
+    
+    print(f"Accuracy after update: {accuracy:.4f}")
+    print("Confusion Matrix:")
+    print(cm)
+    print("Sample predictions:")
+    print(comparison_df.head())
