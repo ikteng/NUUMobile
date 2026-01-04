@@ -1,0 +1,98 @@
+.dashboard-chart-container {
+  border-radius: 12px;
+  padding: 10px;
+  margin-top: 20px;
+  max-width: 100%;
+}
+
+.dashboard-chart-container p {
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Dropdown */
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.dashboard-chart-container .dropdown {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.missing-checkbox {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.missing-checkbox input {
+  cursor: pointer;
+}
+
+/* Chart area */
+.summary-graph {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* Stats below chart */
+.column-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.stat-card {
+  background: #fdfdfd;
+  border-radius: 12px;
+  border: 1px solid #a0a0a0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 12px 16px;
+  flex: 1 1 250px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.stat-card p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.stat-card .stat-values {
+  font-weight: 500;
+  color: #555;
+  word-break: break-word;
+}
+
+/* Error */
+.error-message {
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* Loading text */
+.dashboard-chart-container > p:last-child {
+  color: #666;
+  font-size: 14px;
+}

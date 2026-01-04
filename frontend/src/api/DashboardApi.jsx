@@ -3,11 +3,25 @@ import axios from "axios";
 const API_URL = "http://localhost:5001"; // your Flask backend
 
 export const DashboardApi = {
+    // ----------------------------
+    // Files
+    // ----------------------------
+
     // Get list of uploaded files
     getFiles: async () => {
         const response = await axios.get(`${API_URL}/get_files`);
         return response.data.files;
     },
+
+    // Delete a file
+    deleteFile: async (filename) => {
+        const response = await axios.delete(`${API_URL}/delete_file/${filename}`);
+        return response.data;
+    },
+
+    // ----------------------------
+    // Sheets
+    // ----------------------------
 
     // Get sheets of a specific file
     getSheets: async (filename) => {
@@ -23,9 +37,21 @@ export const DashboardApi = {
         return response.data;
     },
 
-    // Delete a file
-    deleteFile: async (filename) => {
-        const response = await axios.delete(`${API_URL}/delete_file/${filename}`);
+    // ----------------------------
+    // Columns
+    // ----------------------------
+    getAllColumns: async (filename, sheetName) => {
+        const response = await axios.get(
+        `${API_URL}/get_all_columns/${filename}/${sheetName}`
+        );
+        return response.data.columns || [];
+    },
+
+    getColumnData: async (filename, sheetName, column) => {
+        const response = await axios.get(
+        `${API_URL}/get_column_data/${filename}/${sheetName}/${column}`
+        );
         return response.data;
     },
+        
 }

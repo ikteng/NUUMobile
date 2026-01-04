@@ -1,3 +1,9 @@
+.data-preview-container {
+  border-radius: 12px;
+  padding: 10px;
+  max-width: 100%;
+}
+
 .preview-table-container {
   width: 100%;
   overflow-x: auto; /* horizontal scroll if table is too wide */
@@ -5,7 +11,7 @@
   overflow-y: auto;
   border: none;
   border-radius: 8px;
-  padding: 0.5rem;
+  padding: 5px;
   background: #fff;
 }
 

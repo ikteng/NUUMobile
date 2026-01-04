@@ -5,7 +5,7 @@ export default function DataPreview({ previewData, previewColumns, selectedFile,
     if (!previewData || !previewColumns) return null;
 
     return (
-        <div>
+        <div className="data-preview-container">
              <h2>Data Preview</h2>
             <p>
                 Showing preview for <strong>{selectedFile}</strong>, sheet <strong>{selectedSheet}</strong>.

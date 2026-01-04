@@ -39,3 +39,15 @@ h1 {
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
+
+.dashboard-selection .dropdown {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DashboardApi } from "../api/DashboardApi";
 import DataPreview from "../components/Dashboard/DataPreview";
+import ColumnChart from "../components/Dashboard/ColumnChart";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -29,19 +30,27 @@ function Dashboard() {
 
     // Fetch sheets (for Excel files)
     useEffect(() => {
-        if (selectedFile) {
-            const fetchSheets = async () => {
+        if (!selectedFile) {
+            setSheets([]);       // Clear sheets if no file is selected
+            setSelectedSheet(""); // Clear selected sheet
+            return;
+        }
+
+        const fetchSheets = async () => {
             try {
                 const sheets = await DashboardApi.getSheets(selectedFile);
                 setSheets(sheets);
-                if (sheets.length > 0) setSelectedSheet(sheets[0]);
+                setSelectedSheet(sheets.length > 0 ? sheets[0] : ""); // Set first sheet or empty
             } catch (err) {
                 console.error("Error fetching sheets:", err);
+                setSheets([]);
+                setSelectedSheet(""); // Clear sheet on error
             }
-            };
+        };
 
-            fetchSheets();
-        }
+        // Clear selectedSheet immediately when file changes
+        setSelectedSheet("");
+        fetchSheets();
     }, [selectedFile]);
 
     useEffect(() => {
@@ -67,9 +76,11 @@ function Dashboard() {
         <div className="dashboard-selection">
             <div className="dashboard-field">
             <label>Select File:</label>
+            
             <select
                 value={selectedFile}
                 onChange={(e) => setSelectedFile(e.target.value)}
+                className="dropdown"
             >
                 {uploadedFiles.map((file, idx) => (
                 <option key={idx} value={file}>
@@ -84,6 +95,7 @@ function Dashboard() {
             <select
                 value={selectedSheet}
                 onChange={(e) => setSelectedSheet(e.target.value)}
+                className="dropdown"
             >
                 {sheets.map((sheet, idx) => (
                 <option key={idx} value={sheet}>
@@ -104,7 +116,11 @@ function Dashboard() {
                     selectedFile={selectedFile}
                     selectedSheet={selectedSheet}
                 />
-
+                
+                <ColumnChart 
+                            selectedFile={selectedFile} 
+                            selectedSheet={selectedSheet} 
+                        />
                 {/* Here you can later add charts, tables, summaries */}
             </div>
             ) : (
