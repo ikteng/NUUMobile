@@ -14,8 +14,8 @@ export const DashboardApi = {
     },
 
     // Delete a file
-    deleteFile: async (filename) => {
-        const response = await axios.delete(`${API_URL}/delete_file/${filename}`);
+    deleteFile: async (file) => {
+        const response = await axios.delete(`${API_URL}/delete_file/${file}`);
         return response.data;
     },
 
@@ -24,14 +24,14 @@ export const DashboardApi = {
     // ----------------------------
 
     // Get sheets of a specific file
-    getSheets: async (filename) => {
-        const response = await axios.get(`${API_URL}/get_sheets/${filename}`);
+    getSheets: async (file) => {
+        const response = await axios.get(`${API_URL}/get_sheets/${file}`);
         return response.data.sheets || [];
     },
 
     // Get data from a specific sheet of a specific file
-    getSheetData: async (filename, sheet, rows = 3) => {
-        const response = await axios.get(`${API_URL}/get_sheets/${filename}/${sheet}`, {
+    getSheetData: async (file, sheet, rows = 3) => {
+        const response = await axios.get(`${API_URL}/get_sheets/${file}/${sheet}`, {
             params: { rows },
         });
         return response.data;
@@ -40,16 +40,16 @@ export const DashboardApi = {
     // ----------------------------
     // Columns
     // ----------------------------
-    getAllColumns: async (filename, sheetName) => {
+    getAllColumns: async (file, sheet) => {
         const response = await axios.get(
-        `${API_URL}/get_all_columns/${filename}/${sheetName}`
+        `${API_URL}/get_all_columns/${file}/${sheet}`
         );
         return response.data.columns || [];
     },
 
-    getColumnData: async (filename, sheetName, column) => {
+    getColumnData: async (file, sheet, column) => {
         const response = await axios.get(
-        `${API_URL}/get_column_data/${filename}/${sheetName}/${column}`
+        `${API_URL}/get_column_data/${file}/${sheet}/${column}`
         );
         return response.data;
     },

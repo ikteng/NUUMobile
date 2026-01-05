@@ -1,0 +1,111 @@
+.sidebar {
+    position: relative;
+    width: 280px;
+    background: #f9f9f9;
+    border-right: 1px solid #ddd;
+    padding: 10px;
+    transition: width 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.collapsed {
+    width: 20px;
+    padding: 8px 5px;
+}
+
+/* Header */
+.sidebar-header {
+    position: relative;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sidebar-title {
+  font-weight: 600;
+  color: #333;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+/* Toggle button */
+.sidebar-toggle {
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  padding: 2px 6px;
+}
+
+.sidebar-toggle:hover {
+  background: #eaeaea;
+  border-radius: 6px;
+}
+
+/* Content */
+.sidebar-content {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* File & sheet styles */
+.file-name {
+  font-weight: 600;
+  padding: 6px;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+.sheet-name {
+  margin-left: 16px;
+  padding: 4px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+/* Active backgrounds */
+.file-name.active,
+.sheet-name.active {
+  background: #eef2d6;
+}
+
+/* Border radius only on standalone or first/last items */
+.file-name.active {
+  border-radius: 6px; /* standalone file */
+}
+
+/* If file is expanded, adjust rounding */
+.sidebar-file .file-name.active {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 0;
+}
+
+/* Sheets inside expanded file */
+.sidebar-file .sheet-list .sheet-name.active {
+  border-radius: 6px;
+}
+
+/* First sheet gets top corners if no file above */
+.sidebar-file .sheet-list .sheet-name.active:first-child {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Last sheet gets bottom corners */
+.sidebar-file .sheet-list .sheet-name.active:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
