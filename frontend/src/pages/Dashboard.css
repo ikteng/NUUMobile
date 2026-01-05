@@ -11,5 +11,8 @@
   min-height: 0; 
   min-width: 0;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; 
 }
 
