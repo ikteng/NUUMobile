@@ -64,6 +64,18 @@ function Dashboard() {
                 onSelectSheet={selectSheet}
                 collapsed={sidebarCollapsed}
                 onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
+                onFileDeleted={(file) => {
+                    setUploadedFiles((prev) => prev.filter((f) => f !== file));
+                    setFileSheets((prev) => {
+                    const newSheets = { ...prev };
+                    delete newSheets[file];
+                    return newSheets;
+                    });
+                    if (selectedFile === file) {
+                    setSelectedFile("");
+                    setSelectedSheet("");
+                    }
+                }}
             />
 
             <div className="dashboard-content">

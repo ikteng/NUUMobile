@@ -1,8 +1,9 @@
 .dashboard-chart-container {
-  border-radius: 12px;
+  border-radius: 15px;
   padding: 10px;
   margin-top: 20px;
   max-width: 100%;
+  border: 1px solid #ccc;
 }
 
 .dashboard-chart-container p {

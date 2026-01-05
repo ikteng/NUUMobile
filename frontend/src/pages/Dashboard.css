@@ -13,14 +13,3 @@
   overflow-y: auto;
 }
 
-.dashboard-selection .dropdown {
-  width: 100%;
-  max-width: 300px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  margin-bottom: 15px;
-  cursor: pointer;
-}
-

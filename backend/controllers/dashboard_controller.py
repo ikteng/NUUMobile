@@ -40,7 +40,7 @@ def get_sheets(file):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@dashboard_bp.route("/get_sheets/<file>/<sheet>", methods=["GET"])
+@dashboard_bp.route("/get_sheets_data/<file>/<sheet>", methods=["GET"])
 def get_sheets_data(file, sheet):
     filepath = os.path.join(UPLOAD_FOLDER, file)
     if not os.path.exists(filepath):
@@ -73,9 +73,8 @@ def get_sheets_data(file, sheet):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@dashboard_bp.route("/get_sheets/<file>/<sheet>/search", methods=["GET"])
+@dashboard_bp.route("/get_sheets_data/<file>/<sheet>/search", methods=["GET"])
 def get_sheets_data_by_search(file, sheet):
-    print("Searching...")
     filepath = os.path.join(UPLOAD_FOLDER, file)
     if not os.path.exists(filepath):
         return jsonify({"error": "File not found"}), 404

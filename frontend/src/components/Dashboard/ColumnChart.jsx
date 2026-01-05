@@ -180,7 +180,7 @@ const ColumnChart = ({ selectedFile, selectedSheet }) => {
         </div>
       ) : selectedColumn ? (
         loading ? (
-          <p>Loading top 5 from {selectedColumn}...</p>
+          <p>Loading graph for {selectedColumn}...</p>
         ) : (
           <p>No data to display for {selectedColumn}.</p>
         )
