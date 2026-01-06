@@ -5,7 +5,7 @@ import DataPreview from "../components/Dashboard/DataPreview";
 import ColumnChart from "../components/Dashboard/ColumnChart";
 import "./Dashboard.css";
 
-function Dashboard() {
+export default function Dashboard() {
     const [uploadedFiles, setUploadedFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState("");
     const [selectedSheet, setSelectedSheet] = useState("");
@@ -97,5 +97,3 @@ function Dashboard() {
         </div>
     );
 }
-
-export default Dashboard;

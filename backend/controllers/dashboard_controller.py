@@ -40,6 +40,12 @@ def get_sheets(file):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+def paginate(df, page, page_size):
+    total = len(df)
+    start = (page - 1) * page_size
+    end = start + page_size
+    return df.iloc[start:end], total
+
 @dashboard_bp.route("/get_sheets_data/<file>/<sheet>", methods=["GET"])
 def get_sheets_data(file, sheet):
     filepath = os.path.join(UPLOAD_FOLDER, file)
@@ -55,10 +61,8 @@ def get_sheets_data(file, sheet):
         df = xl.parse(sheet)
         df = df.fillna("")
 
-        total_rows = len(df)
-        start = (page - 1) * page_size
-        end = start + page_size
-        preview = df.iloc[start:end].to_dict(orient="records")  # only current page
+        paged_df, total_rows = paginate(df, page, page_size)
+        preview = paged_df.to_dict(orient="records")
         columns = df.columns.tolist()
         xl.close()
 
@@ -95,10 +99,9 @@ def get_sheets_data_by_search(file, sheet):
             mask = df.apply(lambda row: row.astype(str).str.lower().str.contains(searchTerm).any(), axis=1)
             df = df[mask]
 
-        total_rows = len(df)
-        start = (page - 1) * page_size
-        end = start + page_size
-        preview = df.iloc[start:end].to_dict(orient="records")  # only current page
+        paged_df, total_rows = paginate(df, page, page_size)
+        preview = paged_df.to_dict(orient="records")
+
         columns = df.columns.tolist()
         xl.close()
 

@@ -1,0 +1,32 @@
+.predictions-page {
+  padding: 2rem;
+}
+
+.upload-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.predictions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.predictions-table th,
+.predictions-table td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.predictions-table th {
+  background-color: var(--color-primary);
+  color: var(--color-dark-gray);
+}
+
+.error {
+  color: red;
+  margin-top: 1rem;
+}

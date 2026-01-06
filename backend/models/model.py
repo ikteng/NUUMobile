@@ -5,12 +5,13 @@ from sklearn.compose import ColumnTransformer
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix
 import xgboost as xgb
+import joblib
 
 # ------------------------------
 # Core features & target
 # ------------------------------
 core_features = [
-    'register_email', 'sim_info', 'last boot - active', 'last boot - interval', 'trial_return'
+    'register_email', 'sim_info', 'last boot - active', 'last boot - interval', 
 ]
 target = 'Churn'
 
@@ -50,11 +51,7 @@ def preprocess_sheet(df):
     df['last boot - interval'] = df['last boot - interval'].fillna(0)
     df['register_email'] = df['register_email'].fillna(0)
 
-    # 6. trial_return
-    df['trial_return'] = df.get('return - activate', 0).between(20, 40).astype(int) \
-        if 'return - activate' in df.columns else 0
-
-    # 7. Fill missing churn as 0
+    # 6. Fill missing churn as 0
     df[target] = df[target].fillna(0)
 
     return df
@@ -74,7 +71,7 @@ y_train = train_df[target].astype(int)
 # ------------------------------
 # Preprocessing pipeline
 # ------------------------------
-numeric_features = ['last boot - active', 'last boot - interval', 'register_email', 'trial_return']
+numeric_features = ['last boot - active', 'last boot - interval', 'register_email']
 categorical_features = ['sim_info']
 
 preprocessor = ColumnTransformer(transformers=[
@@ -273,3 +270,9 @@ for sheet_name, df in dfs.items():
     print(cm)
     print("Sample predictions:")
     print(comparison_df.head())
+
+# Save trained model
+joblib.dump(xgb_model, "./backend/models/churn_model_xgb.joblib")
+
+# Save preprocessor
+joblib.dump(preprocessor, "./backend/models/preprocessor.joblib")

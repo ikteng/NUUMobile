@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { DashboardApi } from "../../api/DashboardApi";
-import "./DataPreview.css";
+import { PredictionsApi } from "../../api/PredictionsApi";
+import "./PredictionsPreview.css";
 
-export default function DataPreview({ selectedFile, selectedSheet }) {
+export default function PredictionsPreview({ selectedFile, selectedSheet }) {
     const [previewData, setPreviewData] = useState([]);
     const [previewColumns, setPreviewColumns] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -15,35 +15,65 @@ export default function DataPreview({ selectedFile, selectedSheet }) {
 
     const loaderRef = useRef(null);
 
-    // Fetch a page of normal data
+    // Fetch a page of normal predictions
     const fetchPage = async (pageNumber) => {
         pageNumber === 1 ? setInitialLoading(true) : setLoading(true);
         try {
-            const data = await DashboardApi.getSheetData(selectedFile, selectedSheet, pageNumber, pageSize);
-            setPreviewColumns(data.columns);
-            setPreviewData((prev) => (pageNumber === 1 ? data.preview : [...prev, ...data.preview]));
-            setTotalPages(data.total_pages);
+            const data = await PredictionsApi.getPredictions(selectedFile, selectedSheet, pageNumber, pageSize);
+
+            const preview = data.preview || [];
+            if (preview.length === 0 && pageNumber === 1) {
+                setPreviewData([]);
+                setPreviewColumns([]);
+                setTotalPages(1);
+                return;
+            }
+
+            const columns = data.columns || (preview.length > 0 ? Object.keys(preview[0]) : []);
+            setPreviewColumns(columns);
+
+            setPreviewData((prev) =>
+                pageNumber === 1 ? preview : [...prev, ...preview]
+            );
+
+            setTotalPages(data.total_pages || 1);
         } catch (err) {
-            console.error("Error fetching preview:", err);
+            console.error("Error fetching predictions:", err);
+            if (pageNumber === 1) setPreviewData([]);
         } finally {
             pageNumber === 1 ? setInitialLoading(false) : setLoading(false);
         }
     };
 
+
     // Fetch a page of search results
     const fetchSearchPage = async (pageNumber) => {
         pageNumber === 1 ? setInitialLoading(true) : setLoading(true);
         try {
-            const data = await DashboardApi.getSheetDataBySearch(
+            const data = await PredictionsApi.getPredictionsBySearch(
                 selectedFile,
                 selectedSheet,
                 searchTerm,
                 pageNumber,
                 pageSize
             );
-            setPreviewColumns(data.columns);
-            setPreviewData((prev) => (pageNumber === 1 ? data.preview : [...prev, ...data.preview]));
-            setTotalPages(data.total_pages);
+
+            const preview = data.preview || [];
+            if (preview.length === 0 && pageNumber === 1) {
+                setPreviewData([]);
+                setPreviewColumns([]);
+                setTotalPages(1);
+                return;
+            }
+
+            const columns = data.columns || (preview.length > 0 ? Object.keys(preview[0]) : []);
+            setPreviewColumns(columns);
+
+            setPreviewData((prev) =>
+                pageNumber === 1 ? preview : [...prev, ...preview]
+            );
+
+            setTotalPages(data.total_pages || 1);
         } catch (err) {
             console.error("Error fetching search results:", err);
             if (pageNumber === 1) setPreviewData([]);
@@ -51,6 +81,7 @@ export default function DataPreview({ selectedFile, selectedSheet }) {
             pageNumber === 1 ? setInitialLoading(false) : setLoading(false);
         }
     };
+
 
     const handleSearch = () => {
         if (!searchTerm.trim()) return;
@@ -60,7 +91,6 @@ export default function DataPreview({ selectedFile, selectedSheet }) {
         fetchSearchPage(1);
     };
 
-    // If searchTerm becomes empty, switch back to normal data
     useEffect(() => {
         if (!searchTerm && searchActive) {
             // search bar cleared
@@ -104,12 +134,12 @@ export default function DataPreview({ selectedFile, selectedSheet }) {
     if (!selectedFile || !selectedSheet) return null;
 
     return (
-        <div className="data-preview-container">
-            <h2>Data Preview</h2>
+        <div className="predictions-preview-container">
+            <h2>Predictions Preview</h2>
 
-            <div className="data-preview-header">
+            <div className="predictions-preview-header">
                 <p>
-                    Showing preview for <strong>{selectedFile}</strong>, sheet <strong>{selectedSheet}</strong>.
+                    Showing predictions for <strong>{selectedFile}</strong>, sheet <strong>{selectedSheet}</strong>.
                 </p>
 
                 <div className="preview-search-wrapper">
@@ -133,9 +163,9 @@ export default function DataPreview({ selectedFile, selectedSheet }) {
             </div>
 
             {initialLoading ? (
-                <p>Loading data...</p>
+                <p>Loading predictions...</p>
             ) : previewData.length === 0 ? (
-                <p>No data found</p>
+                <p>No predictions found</p>
             ) : (
                 <div className="preview-table-container">
                     <table className="preview-table">
@@ -158,7 +188,7 @@ export default function DataPreview({ selectedFile, selectedSheet }) {
                     </table>
 
                     <div ref={loaderRef} style={{ height: "1px" }}></div>
-                    {loading && <p>Loading more rows...</p>}
+                    {loading && <p>Loading more predictions...</p>}
                 </div>
             )}
         </div>
