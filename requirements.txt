@@ -3,14 +3,10 @@ pandas
 flask
 flask-cors
 matplotlib
-seaborn
 numpy
-fuzzywuzzy
-python-Levenshtein
 joblib
 scikit-learn
 xgboost
-imblearn
-xlrd
 ipykernel
+xlrd
 openpyxl
