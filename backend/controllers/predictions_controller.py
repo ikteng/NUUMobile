@@ -14,9 +14,6 @@ PREPROCESSOR_PATH = os.path.join(BASE_DIR, "..", "models", "preprocessor.joblib"
 xgb_model = joblib.load(MODEL_PATH)
 preprocessor = joblib.load(PREPROCESSOR_PATH)
 
-core_features = [
-    'register_email', 'sim_info', 'last boot - active', 'last boot - interval', 
-]
 target = 'Churn'
 
 def preprocess_sheet(df):
@@ -40,34 +37,27 @@ def preprocess_sheet(df):
     df['last boot - interval'] = ((df['last_boot_date'] - df['interval_date']).dt.total_seconds() / (3600*24)
                                   if 'interval_date' in df.columns and 'last_boot_date' in df.columns else 0)
 
-    if 'sim_info' in df.columns:
-        df['sim_info'] = df['sim_info'].apply(lambda x: 'inserted' if x != 'uninserted' else 'uninserted')
-    else:
-        df['sim_info'] = 'uninserted'  # default value
-
-    df['sim_info'] = df['sim_info'].astype(str)
-
     df['last boot - active'] = df['last boot - active'].fillna(0)
     df['last boot - interval'] = df['last boot - interval'].fillna(0)
 
-    if 'register_email' in df.columns:
-        df['register_email'] = df['register_email'].fillna(0)
-    else:
-        df['register_email'] = 0
+    # Ensure the relevant columns are in the dataframe
+    relevant_columns = ['last boot - active', 'last boot - interval']
+    missing_columns = [col for col in relevant_columns if col not in df.columns]
+    if missing_columns:
+        print(f"Warning: Missing columns: {', '.join(missing_columns)}")
+        raise KeyError(f"Required columns missing: {', '.join(missing_columns)}")
+
+    # Keep only the relevant columns (exclude 'Churn' from features for prediction)
+    df = df[relevant_columns]
 
     if target in df.columns:
         df[target] = df[target].fillna(0)
-
-    for col in core_features:
-        if col not in df.columns:
-            df[col] = 0
 
     return df
 
 def predict_df(df, df_orig):
     # Transform and predict using core_features
-    X_new = df[core_features]
-    X_transformed = preprocessor.transform(X_new)
+    X_transformed = preprocessor.transform(df)
 
     y_proba = xgb_model.predict_proba(X_transformed)[:, 1]
     y_label = (y_proba >= 0.5).astype(int)
