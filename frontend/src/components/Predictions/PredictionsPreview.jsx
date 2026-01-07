@@ -6,8 +6,6 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
     const [previewData, setPreviewData] = useState([]);
     const [previewColumns, setPreviewColumns] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [searchActive, setSearchActive] = useState(false);
 
     // Fetch all predictions
     const fetchPredictions = async () => {
@@ -30,26 +28,10 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
         }
     };
 
-    const handleSearch = () => {
-        if (!searchTerm.trim()) return;
-        setSearchActive(true);
-        fetchPredictions();
-    };
-
     useEffect(() => {
         if (!selectedFile || !selectedSheet) return;
-        setSearchActive(false);
-        setSearchTerm("");
         fetchPredictions();
     }, [selectedFile, selectedSheet]);
-
-    useEffect(() => {
-        if (!searchTerm && searchActive) {
-            // search bar cleared
-            setSearchActive(false);
-            fetchPredictions();
-        }
-    }, [searchTerm]);
 
     if (!selectedFile || !selectedSheet) return null;
 
@@ -63,22 +45,6 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
                     <strong>{selectedSheet}</strong>.
                 </p>
 
-                <div className="preview-search-wrapper">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="preview-search-bar"
-                    />
-                    <button
-                        className="preview-search-button"
-                        onClick={handleSearch}
-                        disabled={!searchTerm.trim()}
-                    >
-                        Search
-                    </button>
-                </div>
             </div>
 
             {loading ? (
