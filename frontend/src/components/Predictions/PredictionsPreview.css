@@ -7,6 +7,10 @@
   margin-bottom: 10px;
 }
 
+.predictions-preview-header-right {
+  display: flex;
+  gap: 5px;
+}
 
 .preview-search-wrapper {
   display: flex;
@@ -40,4 +44,17 @@
 
 .preview-search-button:hover {
   background-color: var(--color-primary-hover);
+}
+
+.download-button {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: var(--color-primary);
+    color: white;
+    cursor: pointer;
+}
+
+.download-button:hover {
+    background-color: var(--color-primary-hover);
 }

@@ -17,4 +17,16 @@ export const PredictionsApi = {
         return response.data;
     },
 
+    downloadPredictions: async (file, sheet) => {
+        try {
+            const response = await axios.get(`${API_URL}/download_predictions/${file}/${sheet}`, {
+                responseType: 'blob', // Specify that the response is a binary blob (Excel file)
+            });
+            return response;
+        } catch (error) {
+            console.error("Error fetching predictions", error);
+            throw error;
+        }
+    },
+
 }

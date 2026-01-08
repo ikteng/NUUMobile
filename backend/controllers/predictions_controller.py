@@ -1,5 +1,6 @@
 import os
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file, Response
+import tempfile
 import joblib
 import pandas as pd
 
@@ -99,7 +100,6 @@ def get_predictions(file, sheet):
         paged_df, total = paginate(response_df, page, page_size)
         total_pages = (total + page_size - 1) // page_size
 
-        print(response_df)
         return jsonify({
             "preview": paged_df.to_dict(orient="records"),
             "columns": list(response_df.columns),
@@ -139,4 +139,35 @@ def get_predictions_search(file, sheet):
             "total_pages": total_pages
         }), 200
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@predictions_bp.route("/download_predictions/<file>/<sheet>", methods=["GET"])
+def download_predictions(file, sheet):
+    print("Downloading full predictions...")
+    filepath = os.path.join(UPLOAD_FOLDER, file)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    try:
+        # Load the Excel file
+        df = pd.read_excel(filepath, sheet_name=sheet)
+        df_orig = df.copy()
+        df = preprocess_sheet(df)  # Preprocess the data
+        response_df = predict_df(df, df_orig)  # Generate predictions
+        
+        # Create a temporary file to store the Excel output
+        with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp_file:
+            output_path = tmp_file.name
+            response_df.to_excel(output_path, index=False)
+            tmp_file.close()  # Close the file explicitly
+
+        # Send the generated file to the client
+        return send_file(output_path, 
+                         as_attachment=True, 
+                         download_name="predictions.xlsx", 
+                         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500

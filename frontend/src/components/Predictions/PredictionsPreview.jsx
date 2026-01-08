@@ -131,6 +131,45 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
         searchActive ? fetchSearchPage(page) : fetchPage(page);
     }, [page]);
 
+    const handleDownload = async () => {
+        try {
+            const response = await PredictionsApi.downloadPredictions(selectedFile, selectedSheet);
+
+            // Check if the response is successful
+            if (response.status === 200) {
+                // Create a Blob from the response data
+                const blob = response.data;
+
+                // Create a URL for the Blob object
+                const url = window.URL.createObjectURL(blob);
+
+                // Create an invisible anchor element
+                const a = document.createElement("a");
+
+                // Set the href to the URL created for the Blob
+                a.href = url;
+
+                // Set the download filename
+                a.download = "predictions.xlsx";
+
+                // Append anchor to the body and simulate a click
+                document.body.appendChild(a);
+                a.click();
+
+                // Remove the anchor after the click
+                a.remove();
+
+                // Clean up the URL object after download
+                window.URL.revokeObjectURL(url);
+            } else {
+                console.error("Failed to download the file");
+            }
+        } catch (error) {
+            console.error("Error downloading the file", error);
+        }
+    };
+
+
     if (!selectedFile || !selectedSheet) return null;
 
     return (
@@ -142,22 +181,29 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
                     Showing predictions for <strong>{selectedFile}</strong>, sheet <strong>{selectedSheet}</strong>.
                 </p>
 
-                <div className="preview-search-wrapper">
-                    <div className="search-input-container">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="preview-search-bar"
-                        />
+                <div className="predictions-preview-header-right">
+                    <div className="preview-search-wrapper">
+                        <div className="search-input-container">
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="preview-search-bar"
+                            />
+                        </div>
+                        <button
+                            className="preview-search-button"
+                            onClick={handleSearch}
+                            disabled={!searchTerm.trim()}
+                        >
+                            Search
+                        </button>
                     </div>
-                    <button
-                        className="preview-search-button"
-                        onClick={handleSearch}
-                        disabled={!searchTerm.trim()}
-                    >
-                        Search
+
+                     {/* Download Button */}
+                    <button className="download-button" onClick={handleDownload}>
+                        Download
                     </button>
                 </div>
             </div>
