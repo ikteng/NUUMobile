@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DashboardApi } from "../../api/DashboardApi";
+import SearchIcon from '@mui/icons-material/Search';
+import CircularProgress from '@mui/material/CircularProgress';
 import "./DataPreview.css";
 
 export default function DataPreview({ selectedFile, selectedSheet }) {
@@ -110,12 +112,16 @@ export default function DataPreview({ selectedFile, selectedSheet }) {
             />
           </div>
           <button
-            className="preview-search-button"
-            onClick={handleSearch}
-            disabled={!searchTerm.trim()}
-          >
-            Search
-          </button>
+              className="preview-search-button"
+              onClick={handleSearch}
+              disabled={!searchTerm.trim() || initialLoading}
+            >
+              {initialLoading ? (
+                <CircularProgress color="inherit" size={16} />
+              ) : (
+                <SearchIcon />
+              )}
+            </button>
         </div>
       </div>
 

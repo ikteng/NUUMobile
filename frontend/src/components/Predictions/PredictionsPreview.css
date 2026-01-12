@@ -14,9 +14,9 @@
 
 .preview-search-wrapper {
   display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
   align-items: center;
+  gap: 0;
+  flex-wrap: nowrap;
 }
 
 .search-input-container {
@@ -25,36 +25,53 @@
 }
 
 .preview-search-bar {
+  flex: 1;
   padding: 5px 30px 5px 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
   width: 100%;
   box-sizing: border-box;
 }
 
 .preview-search-button {
-  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
   border-radius: 6px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   border: 1px solid #ccc;
   background-color: var(--color-primary);
   color: white;
   cursor: pointer;
-  flex: 0 0 auto;
 }
 
 .preview-search-button:hover {
   background-color: var(--color-primary-hover);
 }
 
+.preview-search-button svg {
+  font-size: 16px;
+}
+
 .download-button {
-    padding: 5px 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background-color: var(--color-primary);
-    color: white;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  background-color: var(--color-primary);
+  color: white;
+  cursor: pointer;
 }
 
 .download-button:hover {
-    background-color: var(--color-primary-hover);
+  background-color: var(--color-primary-hover);
+}
+
+.download-button svg {
+  font-size: 16px;
 }

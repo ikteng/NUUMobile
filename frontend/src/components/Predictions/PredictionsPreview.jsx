@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { PredictionsApi } from "../../api/PredictionsApi";
+import DownloadIcon from '@mui/icons-material/Download';
+import SearchIcon from '@mui/icons-material/Search';
+import CircularProgress from '@mui/material/CircularProgress';
 import "./PredictionsPreview.css";
 
 export default function PredictionsPreview({ selectedFile, selectedSheet }) {
@@ -11,6 +14,7 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
   const [pageSize] = useState(20);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [downloading, setDownloading] = useState(false);
 
   const loaderRef = useRef(null);
 
@@ -87,6 +91,7 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
   }, [page]);
 
   const handleDownload = async () => {
+    setDownloading(true);
     try {
       const response = await PredictionsApi.downloadPredictions(selectedFile, selectedSheet);
       const url = window.URL.createObjectURL(response.data);
@@ -99,6 +104,8 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading predictions:", error);
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -125,15 +132,25 @@ export default function PredictionsPreview({ selectedFile, selectedSheet }) {
             <button
               className="preview-search-button"
               onClick={handleSearch}
-              disabled={!searchTerm.trim()}
+              disabled={!searchTerm.trim() || initialLoading}
             >
-              Search
+              {initialLoading ? (
+                <CircularProgress color="inherit" size={16} />
+              ) : (
+                <SearchIcon />
+              )}
             </button>
+
           </div>
 
-          <button className="download-button" onClick={handleDownload}>
-            Download
+          <button className="download-button" onClick={handleDownload} disabled={downloading}>
+            {downloading ? (
+              <CircularProgress color="inherit" size={16} />
+            ) : (
+              <DownloadIcon />
+            )}
           </button>
+
         </div>
       </div>
 
