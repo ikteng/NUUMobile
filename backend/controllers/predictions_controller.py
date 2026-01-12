@@ -145,3 +145,35 @@ def download_predictions(file, sheet):
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+@predictions_bp.route("/predictions_stats/<file>/<sheet>", methods=["GET"])
+def predictions_stats(file, sheet):
+    filepath = os.path.join(UPLOAD_FOLDER, file)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    try:
+        df = pd.read_excel(filepath, sheet_name=sheet)
+        df_orig = df.copy()
+        df = preprocess_sheet(df)
+        response_df = predict_df(df, df_orig)
+
+        # Compute statistics
+        total = len(response_df)
+        churn_count = (response_df["Churn Prediction"] == "1").sum()
+        non_churn_count = total - churn_count
+        avg_prob = response_df["Churn Prediction Probability"].astype(float).mean()
+
+        stats = {
+            "total_rows": total,
+            "churn_count": int(churn_count),
+            "non_churn_count": int(non_churn_count),
+            "average_probability": float(avg_prob)
+        }
+
+        return jsonify(stats), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500

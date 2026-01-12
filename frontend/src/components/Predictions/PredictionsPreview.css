@@ -1,3 +1,9 @@
+.predictions-preview-container {
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
 .predictions-preview-header {
   display: flex;
   flex-wrap: wrap;

@@ -12,9 +12,14 @@ export const PredictionsApi = {
 
     downloadPredictions: async (file, sheet) => {
         const response = await axios.get(`${API_URL}/download_predictions/${file}/${sheet}`, {
-            responseType: 'blob', // Specify that the response is a binary blob (Excel file)
+            responseType: 'blob',
         });
         return response;
     },
+
+    getPredictionsStats: async (file, sheet) => {
+        const response = await axios.get(`${API_URL}/predictions_stats/${file}/${sheet}`);
+        return response.data;
+    }
 
 }

@@ -1,0 +1,31 @@
+.predictions-stats-container {
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.stats-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 120px;
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.stat-card h3 {
+  margin: 4px 0 0 0;
+  font-size: 1.3rem;
+}

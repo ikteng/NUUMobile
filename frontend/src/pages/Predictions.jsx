@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DashboardApi } from "../api/DashboardApi";
 import { PredictionsApi } from "../api/PredictionsApi";
 import FileSidebar from "../components/Dashboard/FileSidebar";
+import PredictionsStats from "../components/Predictions/PredictionsStats";
 import PredictionsPreview from "../components/Predictions/PredictionsPreview";
 import "./Predictions.css";
 
@@ -79,11 +80,18 @@ export default function Predictions() {
             />
 
             <div className="dashboard-content">
-                {selectedFile && selectedSheet ? (
-                    <PredictionsPreview
-                        selectedFile={selectedFile}
-                        selectedSheet={selectedSheet}
-                    />
+                {selectedFile && selectedSheet ? ( 
+                    <>
+                        <PredictionsStats
+                            selectedFile={selectedFile}
+                            selectedSheet={selectedSheet}
+                        />
+
+                        <PredictionsPreview
+                            selectedFile={selectedFile}
+                            selectedSheet={selectedSheet}
+                        />
+                    </>
                 ) : (
                     <>
                     <h1>Predictions</h1>
