@@ -1,8 +1,11 @@
 import os
+import json
 from flask import Blueprint, request, jsonify, send_file, Response
 import tempfile
 import joblib
 import pandas as pd
+import traceback
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 predictions_bp = Blueprint("predictions", __name__)
@@ -111,7 +114,6 @@ def get_predictions(file, sheet):
             "total_pages": total_pages
         }), 200
     except Exception as e:
-        import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
@@ -142,7 +144,6 @@ def download_predictions(file, sheet):
                          mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
     except Exception as e:
-        import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     
@@ -174,6 +175,89 @@ def predictions_stats(file, sheet):
         return jsonify(stats), 200
 
     except Exception as e:
-        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@predictions_bp.route("/model_accuracy/<file>/<sheet>", methods=["GET"])
+def model_accuracy(file, sheet):
+    filepath = os.path.join(UPLOAD_FOLDER, file)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    try:
+        df = pd.read_excel(filepath, sheet_name=sheet)
+
+        # Find the churn column
+        churn_cols = ['Chrn Flag', 'Churn', 'Churn Flag']
+        churn_col_found = next((col for col in churn_cols if col in df.columns), None)
+        if churn_col_found is None:
+            return jsonify({"message": "No churn column found in this sheet"}), 200
+
+        # Extract target column before preprocessing
+        y_true = df[churn_col_found].astype(int)
+
+        # Preprocess only the features
+        df_features = preprocess_sheet(df)
+
+        # Transform features
+        X_transformed = preprocessor.transform(df_features)
+
+        # Predict
+        y_pred = xgb_model.predict(X_transformed)
+        y_proba = xgb_model.predict_proba(X_transformed)[:, 1]
+
+        # Compute metrics
+        report = classification_report(y_true, y_pred, output_dict=True)
+        conf_matrix = confusion_matrix(y_true, y_pred).tolist()
+        auc_score = roc_auc_score(y_true, y_proba)
+
+        return jsonify({
+            "classification_report": report,
+            "confusion_matrix": conf_matrix,
+            "roc_auc": auc_score
+        }), 200
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@predictions_bp.route("/feature_importance", methods=["GET"])
+def feature_importance():
+    try:
+        # Must match the feature order used during training
+        feature_names = ['last boot - active', 'last boot - interval']
+
+        # Get raw importance scores from XGBoost model
+        importances = xgb_model.feature_importances_
+
+        # Normalize to percentage
+        total = importances.sum()
+        features = [
+            {
+                "feature": feature_names[i],
+                "importance": float((importances[i] / total) * 100)
+            }
+            for i in range(len(feature_names))
+        ]
+
+        return jsonify({"features": features}), 200
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@predictions_bp.route("/model_training_metrics", methods=["GET"])
+def model_training_metrics():
+    try:
+        metrics_path = './backend/models/model_metrics.json'
+        if not os.path.exists(metrics_path):
+            return jsonify({"error": "Metrics file not found"}), 404
+
+        with open(metrics_path, 'r') as f:
+            metrics = json.load(f)
+
+        print("Metrics: ", metrics)
+        return jsonify(metrics), 200
+    except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500

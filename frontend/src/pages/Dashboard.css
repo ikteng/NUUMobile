@@ -31,14 +31,14 @@
   color: #666;
 }
 
-.tabs-container {
+.dashboard-content .tabs-container {
   display: flex;
   padding-bottom: 5px;
   overflow-x: auto;
   white-space: nowrap;
 }
 
-.tab-button {
+.dashboard-content .tab-button {
   background-color: #f1f1f1;
   border: none;
   border-radius: 15px 15px 0 0;
@@ -50,16 +50,16 @@
   outline: none;
 }
 
-.tab-button:hover {
+.dashboard-content .tab-button:hover {
   background-color: #ddd;
 }
 
-.tab-button.active {
+.dashboard-content .tab-button.active {
   background-color: #a3ba20;
   color: white;
 }
 
-.tab-content {
+.dashboard-content .tab-content {
   padding: 20px;
   border-radius: 0 20px 20px 20px;
   background-color: #f1f1f1;

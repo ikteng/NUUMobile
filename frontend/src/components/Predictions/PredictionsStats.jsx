@@ -31,7 +31,9 @@ export default function PredictionsStats({ selectedFile, selectedSheet }) {
     <div className="predictions-stats-container">
       <h2>Predictions Statistics</h2>
       {loading ? (
-        <CircularProgress size={24} sx={{ color: "var(--color-primary)" }} />
+        <div className="circular-progress-wrapper">
+          <CircularProgress size={24} sx={{ color: "var(--color-primary)" }} />
+        </div>
       ) : stats ? (
         <div className="stats-grid">
           <div className="stat-card">

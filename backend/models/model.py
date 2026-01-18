@@ -1,4 +1,6 @@
 import pandas as pd
+from pathlib import Path
+import json
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
@@ -79,6 +81,16 @@ joblib.dump(xgb_model, './backend/models/churn_model_xgb.joblib')
 
 # Save the preprocessor (scaler)
 joblib.dump(scaler, './backend/models/preprocessor.joblib')
+
+metrics = {
+    "classification_report": classification_report(y_test, y_pred, output_dict=True),
+    "confusion_matrix": confusion_matrix(y_test, y_pred).tolist(),
+    "roc_auc": roc_auc_score(y_test, y_pred_proba)
+}
+
+metrics_path = Path('./backend/models/model_metrics.json')
+with open(metrics_path, 'w') as f:
+    json.dump(metrics, f, indent=2)
 
 # # Focus on the "N10" sheet for prediction
 # df_n10 = dfs["N10"]

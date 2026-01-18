@@ -1,7 +1,15 @@
 .predictions-stats-container {
   padding: 16px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.circular-progress-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
 }
 
 .stats-grid {
@@ -13,10 +21,11 @@
 .stat-card {
   flex: 1;
   min-width: 120px;
-  background: #f9f9f9;
+  background: #f6f8ef;
   padding: 12px;
   border-radius: 8px;
   text-align: center;
+  border: 1px solid #e2e8c8;
 }
 
 .stat-card p {
