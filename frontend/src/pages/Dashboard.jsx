@@ -12,6 +12,7 @@ export default function Dashboard() {
     const [expandedFiles, setExpandedFiles] = useState({});
     const [fileSheets, setFileSheets] = useState({});
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [activeTab, setActiveTab] = useState("chart");
 
     useEffect(() => {
         document.title = "Dashboard - Churn Predictor";
@@ -50,6 +51,28 @@ export default function Dashboard() {
     const selectSheet = (file, sheet) => {
         setSelectedFile(file);
         setSelectedSheet(sheet);
+        setActiveTab("chart");
+    };
+
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case "chart":
+                return (
+                    <ColumnChart
+                        selectedFile={selectedFile}
+                        selectedSheet={selectedSheet}
+                    />
+                );
+            case "preview":
+                return (
+                    <DataPreview
+                        selectedFile={selectedFile}
+                        selectedSheet={selectedSheet}
+                    />
+                );
+            default:
+                return null;
+        }
     };
 
     return (
@@ -81,14 +104,34 @@ export default function Dashboard() {
             <div className="dashboard-content">
                 {selectedFile && selectedSheet ? (
                     <>
-                        <ColumnChart
-                            selectedFile={selectedFile}
-                            selectedSheet={selectedSheet}
-                        />
-                        <DataPreview
-                            selectedFile={selectedFile}
-                            selectedSheet={selectedSheet}
-                        />
+                        {/* --- File / Sheet Title --- */}
+                        <div className="dashboard-titlebar">
+                            <h2>
+                                {selectedFile}
+                                <span className="sheet-name"> — Sheet: {selectedSheet}</span>
+                            </h2>
+                        </div>
+
+                        {/* --- Tab Bar --- */}
+                        <div className="tabs-container">
+                            <button
+                                className={`tab-button ${activeTab === "chart" ? "active" : ""}`}
+                                onClick={() => setActiveTab("chart")}
+                            >
+                                Column Chart
+                            </button>
+                            <button
+                                className={`tab-button ${activeTab === "preview" ? "active" : ""}`}
+                                onClick={() => setActiveTab("preview")}
+                            >
+                                Data Preview
+                            </button>
+                        </div>
+
+                        {/* --- Tab Content --- */}
+                        <div className="tab-content">
+                            {renderTabContent()}
+                        </div>
                     </>
                 ) : (
                     <>

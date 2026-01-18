@@ -54,7 +54,7 @@ export default function Predictions() {
     };
 
     return (
-        <div className="dashboard-layout">
+        <div className="predictions-layout">
             <FileSidebar
                 files={uploadedFiles}
                 expandedFiles={expandedFiles}
@@ -79,7 +79,7 @@ export default function Predictions() {
                 }}
             />
 
-            <div className="dashboard-content">
+            <div className="predictions-content">
                 {selectedFile && selectedSheet ? ( 
                     <>
                         <PredictionsStats

@@ -2,28 +2,22 @@
   padding: 2rem;
 }
 
-.upload-section {
+.predictions-layout {
   display: flex;
+  height: calc(100vh - 70px);
+  background-color: #f7f8fa;
+  overflow: hidden;
+}
+
+.predictions-content {
+  flex: 1;
+  padding: 2rem;
+  min-height: 0; 
+  min-width: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.predictions-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.predictions-table th,
-.predictions-table td {
-  border: 1px solid #ddd;
-  padding: 6px 10px;
-  text-align: center;
-}
-
-.predictions-table th {
-  background-color: var(--color-primary);
-  color: var(--color-dark-gray);
 }
 
 .error {
