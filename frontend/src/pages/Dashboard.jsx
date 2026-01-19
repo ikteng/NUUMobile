@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { DashboardApi } from "../api/DashboardApi";
 import FileSidebar from "../components/Dashboard/FileSidebar";
 import DataPreview from "../components/Dashboard/DataPreview";
-import ColumnChart from "../components/Dashboard/ColumnChart";
+
+import FrequencyChart from "../components/Dashboard/FrequencyChart";
+import CorrelationHeatmap from "../components/Dashboard/CorrelationHeatmap";
+
 import "./Dashboard.css";
 
 export default function Dashboard() {
@@ -58,10 +61,17 @@ export default function Dashboard() {
         switch (activeTab) {
             case "chart":
                 return (
-                    <ColumnChart
-                        selectedFile={selectedFile}
-                        selectedSheet={selectedSheet}
-                    />
+                    <>
+                        <FrequencyChart
+                            selectedFile={selectedFile}
+                            selectedSheet={selectedSheet}
+                        />
+
+                        <CorrelationHeatmap
+                            selectedFile={selectedFile}
+                            selectedSheet={selectedSheet}
+                        />
+                    </>
                 );
             case "preview":
                 return (

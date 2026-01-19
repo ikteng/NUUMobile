@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from flask import Blueprint, request, jsonify
 import traceback
+import plotly.graph_objects as go
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 
@@ -152,8 +153,8 @@ def parse_datetime(value):
         except:
             return None
 
-@dashboard_bp.route("/get_column_data/<file>/<sheet>/<column>", methods=["GET"])
-def get_column_data(file, sheet, column):
+@dashboard_bp.route("/get_column_frequency/<file>/<sheet>/<column>", methods=["GET"])
+def get_column_frequency(file, sheet, column):
     file_path = os.path.join(UPLOAD_FOLDER, file)
 
     if not os.path.exists(file_path):
@@ -195,3 +196,59 @@ def get_column_data(file, sheet, column):
     except Exception as e:
         traceback.print_exc()
         return {"error": str(e)}
+    
+@dashboard_bp.route("/get_correlation_heatmap/<file>/<sheet>", methods=["GET"])
+def get_correlation_heatmap(file, sheet):
+    filepath = os.path.join(UPLOAD_FOLDER, file)
+    if not os.path.exists(filepath):
+        return jsonify({"error": "File not found"}), 404
+
+    try:
+        df = pd.read_excel(filepath, sheet_name=sheet)
+
+        for date_col in ['active_date', 'last_boot_date', 'interval_date']:
+            if date_col in df.columns:
+                df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+
+        if 'last_boot_date' in df.columns and 'active_date' in df.columns:
+            df['last boot - active'] = (df['last_boot_date'] - df['active_date']).dt.total_seconds() / (3600*24)
+        if 'last_boot_date' in df.columns and 'interval_date' in df.columns:
+            df['last boot - interval'] = (df['last_boot_date'] - df['interval_date']).dt.total_seconds() / (3600*24)
+
+        # Keep only numeric columns for correlation
+        numeric_df = df.select_dtypes(include=["number"])
+
+        if numeric_df.empty:
+            return jsonify({"message": "No numeric columns to calculate correlation"}), 200
+
+        # Compute correlation matrix
+        corr_df = numeric_df.corr().round(3)
+
+        # Create Plotly heatmap
+        fig = go.Figure(
+            data=go.Heatmap(
+                z=corr_df.values,
+                x=corr_df.columns,
+                y=corr_df.columns,
+                colorscale='RdBu',
+                zmin=-1,
+                zmax=1,
+                colorbar=dict(title="Correlation")
+            )
+        )
+
+        fig.update_layout(
+            xaxis_title="Columns",
+            yaxis_title="Columns",
+            autosize=True,
+            margin=dict(l=100, r=100, t=100, b=100)
+        )
+
+        # Convert figure to JSON
+        fig_json = fig.to_json()
+
+        return jsonify({"plotly_json": json.loads(fig_json)}), 200
+
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500

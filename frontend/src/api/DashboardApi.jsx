@@ -47,9 +47,16 @@ export const DashboardApi = {
         return response.data.columns || [];
     },
 
-    getColumnData: async (file, sheet, column) => {
+    getColumnFrequency: async (file, sheet, column) => {
         const response = await axios.get(
-        `${API_URL}/get_column_data/${file}/${sheet}/${column}`
+        `${API_URL}/get_column_frequency/${file}/${sheet}/${column}`
+        );
+        return response.data;
+    },
+
+    getCorrelationHeatmap: async (file, sheet) => {
+        const response = await axios.get(
+        `${API_URL}/get_correlation_heatmap/${file}/${sheet}`
         );
         return response.data;
     },

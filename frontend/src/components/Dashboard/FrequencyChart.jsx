@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { DashboardApi } from '../../api/DashboardApi';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import './ColumnChart.css';
+import './FrequencyChart.css';
 
-const ColumnChart = ({ selectedFile, selectedSheet }) => {
+export default function ColumnChart ({ selectedFile, selectedSheet }) {
   const [columns, setColumns] = useState([]);
   const [selectedColumn, setSelectedColumn] = useState('');
   const [chartData, setChartData] = useState([]);
@@ -26,7 +26,7 @@ const ColumnChart = ({ selectedFile, selectedSheet }) => {
     if (!selectedColumn) return;
 
     setLoading(true);
-    DashboardApi.getColumnData(selectedFile, selectedSheet, selectedColumn)
+    DashboardApi.getColumnFrequency(selectedFile, selectedSheet, selectedColumn)
       .then((data) => {
         if (data.error) {
           setError(data.error);
@@ -189,5 +189,3 @@ const ColumnChart = ({ selectedFile, selectedSheet }) => {
     </div>
   );
 };
-
-export default ColumnChart;
