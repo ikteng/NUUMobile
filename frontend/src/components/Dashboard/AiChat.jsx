@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DashboardApi } from "../../api/DashboardApi";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import CloseIcon from "@mui/icons-material/Close";
+import ReactMarkdown from "react-markdown";
 import "./AiChat.css";
 
 export default function AiChat({ selectedFile, selectedSheet }) {
@@ -32,6 +33,7 @@ export default function AiChat({ selectedFile, selectedSheet }) {
         { role: "assistant", content: response.answer }
       ]);
     } catch (err) {
+      console.log("Error: ", err)
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "Error talking to AI." }
@@ -40,6 +42,12 @@ export default function AiChat({ selectedFile, selectedSheet }) {
       setLoading(false);
     }
   };
+
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   if (!selectedFile || !selectedSheet) return null;
 
@@ -59,10 +67,14 @@ export default function AiChat({ selectedFile, selectedSheet }) {
             </span>
           </div>
 
-          <div className="ai-chat-messages">
+          <div className="ai-chat-messages" ref={messagesEndRef}>
             {messages.map((m, i) => (
               <div key={i} className={`msg ${m.role}`}>
-                {m.content}
+                {m.role === "assistant" ? (
+                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                ) : (
+                  m.content
+                )}
               </div>
             ))}
             {loading && <div className="msg assistant">Thinking...</div>}

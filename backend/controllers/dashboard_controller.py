@@ -5,7 +5,6 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 import traceback
 import plotly.graph_objects as go
-import requests
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 
@@ -312,99 +311,3 @@ def get_distribution_vs_churn(file, sheet, column):
     except Exception as e:
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-
-OLLAMA_URL = "http://localhost:11434/api/chat"
-OLLAMA_MODEL = "llama3.2"
-
-@dashboard_bp.route("/ask_ai_about_sheet/<file>/<sheet>", methods=["POST"])
-def ask_ai_about_sheet(file, sheet):
-    filepath = os.path.join(UPLOAD_FOLDER, file)
-    if not os.path.exists(filepath):
-        return jsonify({"error": "File not found"}), 404
-
-    try:
-        question = request.json.get("question", "").strip()
-        if not question:
-            return jsonify({"answer": "Please ask a question."})
-
-        df = pd.read_excel(filepath, sheet_name=sheet)
-
-        # ---------- Build compact dataset summary ----------
-        schema = "\n".join([f"- {c}: {df[c].dtype}" for c in df.columns])
-        row_count = len(df)
-
-        summary_lines = []
-        summary_lines.append(f"Total rows: {row_count}")
-
-        # Missing values
-        missing = df.isna().sum()
-        summary_lines.append("\nMissing values per column:")
-        summary_lines.append(missing.to_string())
-
-        # Numeric stats
-        numeric_df = df.select_dtypes(include=["number"])
-        if not numeric_df.empty:
-            summary_lines.append("\nNumeric statistics:")
-            summary_lines.append(numeric_df.describe().round(2).to_string())
-
-        # Categorical top values (limit)
-        cat_df = df.select_dtypes(exclude=["number"])
-        for col in cat_df.columns[:5]:
-            top_vals = cat_df[col].value_counts().head(3)
-            summary_lines.append(f"\nTop values for {col}:")
-            summary_lines.append(top_vals.to_string())
-
-        # Sample rows
-        summary_lines.append("\nSample rows:")
-        summary_lines.append(df.head(5).to_csv(index=False))
-
-        data_section = "\n".join(summary_lines)
-
-        # ---------- Prompt ----------
-        prompt = f"""
-        Dataset columns:
-        {schema}
-
-        Dataset summary:
-        {data_section}
-
-        User question:
-        {question}
-
-        Answer ONLY using the dataset information above.
-        If the question cannot be answered, say so.
-        Keep the answer concise.
-        """
-
-        payload = {
-            "model": OLLAMA_MODEL,
-            "messages": [
-                {"role": "system", "content": "You are a data analyst. Answer only from provided dataset summary."},
-                {"role": "user", "content": prompt}
-            ],
-            "options": {
-                "temperature": 0.1,
-                "num_ctx": 4096
-            },
-            "stream": False
-        }
-
-        response = requests.post(OLLAMA_URL, json=payload, timeout=120)
-        result = response.json()
-
-        # Ollama response handling
-        if "message" in result:
-            answer = result["message"]["content"]
-        elif "response" in result:
-            answer = result["response"]
-        elif "error" in result:
-            return jsonify({"error": result["error"]}), 500
-        else:
-            return jsonify({"error": f"Unexpected Ollama response: {result}"}), 500
-
-        return jsonify({"answer": answer})
-
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
-
