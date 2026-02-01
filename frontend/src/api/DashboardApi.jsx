@@ -49,6 +49,13 @@ export const DashboardApi = {
         return response.json();
     },
 
+    loadAiChatHistory: async (file, sheet) => {
+        const response = await axios.get(
+        `${API_URL}/chat_history/${file}/${sheet}`
+        );
+        return response.data;
+    },
+
     // ----------------------------
     // Columns
     // ----------------------------

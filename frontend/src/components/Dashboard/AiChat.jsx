@@ -7,9 +7,7 @@ import "./AiChat.css";
 
 export default function AiChat({ selectedFile, selectedSheet }) {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { role: "assistant", content: "Hi! Ask me anything!" }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -49,6 +47,30 @@ export default function AiChat({ selectedFile, selectedSheet }) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  useEffect(() => {
+    if (!selectedFile || !selectedSheet) return;
+
+    const loadHistory = async () => {
+      const data = await DashboardApi.loadAiChatHistory(
+        selectedFile,
+        selectedSheet
+      );
+
+      setMessages(
+        data.history?.length
+          ? data.history
+          : [{
+              role: "assistant",
+              content: selectedFile && selectedSheet
+                ? `Hi! Ask me anything about **${selectedFile} → ${selectedSheet}**.`
+                : "Hi! Ask me anything!"
+            }]
+      );
+    };
+
+    loadHistory();
+  }, [selectedFile, selectedSheet]);
+
   if (!selectedFile || !selectedSheet) return null;
 
   return (
@@ -84,7 +106,11 @@ export default function AiChat({ selectedFile, selectedSheet }) {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about this dataset..."
+              placeholder={
+                selectedFile && selectedSheet
+                  ? `Ask about ${selectedFile} → ${selectedSheet}...`
+                  : "Ask a question..."
+              }
               onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             />
             <button onClick={sendMessage}>Send</button>

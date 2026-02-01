@@ -1,4 +1,5 @@
 import os
+import json
 import traceback
 import pandas as pd
 from flask import Blueprint, request, jsonify
@@ -11,6 +12,24 @@ chat_bp = Blueprint("chat", __name__)
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 OLLAMA_MODEL = "llama3.2:3b"
+
+CHAT_STORE = os.path.join(os.getcwd(), "chat_store")
+os.makedirs(CHAT_STORE, exist_ok=True)
+
+def chat_path(chat_key):
+    safe_key = chat_key.replace("::", "__")
+    return os.path.join(CHAT_STORE, f"{safe_key}.json")
+
+def load_chat(chat_key):
+    path = chat_path(chat_key)
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            CHAT_MEMORY[chat_key] = json.load(f)
+
+def save_chat(chat_key):
+    path = chat_path(chat_key)
+    with open(path, "w") as f:
+        json.dump(CHAT_MEMORY[chat_key], f)
 
 # ---------------------------
 # In-memory chat memory
@@ -48,6 +67,9 @@ def stringify_all(obj):
 # LLM Explainer
 # ---------------------------
 def explain_with_llm(question, result, chat_key):
+    if chat_key not in CHAT_MEMORY:
+        load_chat(chat_key)
+
     CHAT_MEMORY[chat_key].append({"role": "user", "content": question})
     
     messages = [
@@ -73,6 +95,7 @@ def explain_with_llm(question, result, chat_key):
         content = f"Failed to connect to Ollama: {e}"
     
     CHAT_MEMORY[chat_key].append({"role": "assistant", "content": content})
+    save_chat(chat_key)
     print("Content: ", content)
     return content
 
@@ -113,5 +136,22 @@ def ask_ai_about_sheet(file, sheet):
 @chat_bp.route("/reset_chat/<file>/<sheet>", methods=["POST"])
 def reset_chat(file, sheet):
     chat_key = get_chat_key(file, sheet)
+
+    # Clear memory
     CHAT_MEMORY.pop(chat_key, None)
+
+    # Remove persisted file
+    path = chat_path(chat_key)
+    if os.path.exists(path):
+        try:
+            os.remove(path)
+        except Exception as e:
+            return jsonify({"error": f"Failed to delete chat file: {e}"}), 500
+
     return jsonify({"status": "chat reset"})
+
+@chat_bp.route("/chat_history/<file>/<sheet>", methods=["GET"])
+def chat_history(file, sheet):
+    chat_key = get_chat_key(file, sheet)
+    load_chat(chat_key)
+    return jsonify({"history": CHAT_MEMORY.get(chat_key, [])})

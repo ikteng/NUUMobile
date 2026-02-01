@@ -59,7 +59,7 @@ echo "Fetch and build docker image"
 # docker run -d -p 11434:11434 -v ~/.ollama:/root/.ollama --name ollama alpine/ollama
 # docker exec -ti ollama ollama pull llama3.2
 
-# docker rm -f ollama
+docker rm -f ollama
 docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 docker exec -it ollama ollama pull llama3.2:3b
 
